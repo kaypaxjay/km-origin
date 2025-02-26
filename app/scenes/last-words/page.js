@@ -68,7 +68,6 @@ export default function LastWords() {
         },
     ];
 
-    // Define background audio outside useEffect
     const windAudio = new Audio("/sounds/sad-music.mp3");
     windAudio.loop = true;
     windAudio.volume = 0.2;
@@ -84,22 +83,19 @@ export default function LastWords() {
                 whooshAudio.volume = 0.8;
                 whooshAudio.play().catch(() => console.log("Whoosh audio failed—skipped"));
                 setTimeout(() => {
-                    window.location.href = "/scenes/conclusion"; // Redirect to Scene 1j
+                    window.location.href = "/scenes/conclusion";
                 }, 500);
             }, 100);
         }
     };
 
-    // Background music control (runs once on mount/unmount)
     useEffect(() => {
         windAudio.play().catch(() => console.log("Wind audio failed—skipped"));
-
         return () => {
             windAudio.pause();
         };
-    }, []); // Empty dependency array—runs only on mount/unmount
+    }, []);
 
-    // Dialogue and transition control
     useEffect(() => {
         if (step === -1) {
             setTimeout(() => {
@@ -109,30 +105,23 @@ export default function LastWords() {
 
         if (step >= 0 && step < 8 && dialogue[step].sound) {
             const soundAudio = new Audio(dialogue[step].sound);
-            soundAudio.volume = 0.8; // Only sword-impact remains
+            soundAudio.volume = 0.8;
             soundAudio.play().catch(() => console.log("Sound audio failed—skipped"));
         }
-    }, [step]); // Runs on step change
+    }, [step]);
 
     return (
         <div className="scene-container" onClick={step < 8 ? handleClick : null}>
             <img src="/images/sal-end.png" alt="Sal's End" className="background" />
             {step >= 0 && step < 8 && (
                 <>
-                    {dialogue[step].character === "Ello" && (
-                        <img
-                            src={dialogue[step].sprite}
-                            alt="Ello"
-                            className={`sprite ello active ${dialogue[step].animation}`}
-                        />
-                    )}
-                    {dialogue[step].character === "Sal" && (
-                        <img
-                            src={dialogue[step].sprite}
-                            alt="Sal"
-                            className={`sprite sal active ${dialogue[step].animation}`}
-                        />
-                    )}
+                    <img
+                        src={dialogue[step].sprite}
+                        alt={dialogue[step].character}
+                        className={`sprite ${dialogue[step].character.toLowerCase()} active ${
+                            dialogue[step].animation
+                        }`}
+                    />
                     <DialogueBox
                         character={dialogue[step].character}
                         text={dialogue[step].text}

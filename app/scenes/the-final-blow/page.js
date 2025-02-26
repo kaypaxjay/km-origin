@@ -28,7 +28,7 @@ export default function TheFinalBlow() {
         },
         {
             character: "Ello",
-            text: "A true king shields the meek, not his pride!",
+            text: "A king who does not protect his people is no king at all!",
             sprite: "/images/ello-sprite.png",
             sound: "/sounds/sword-impact.mp3",
             animation: "strike",
@@ -78,7 +78,7 @@ export default function TheFinalBlow() {
     useEffect(() => {
         const windAudio = new Audio("/sounds/wind-gust.mp3");
         windAudio.loop = true;
-        windAudio.volume = 0.3;
+        windAudio.volume = 0.1;
         windAudio.play().catch(() => console.log("Wind audio failed—skipped"));
 
         if (step === -1) {

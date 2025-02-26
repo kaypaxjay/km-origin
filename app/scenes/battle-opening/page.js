@@ -15,14 +15,14 @@ export default function BattleOpening() {
             character: "Ello",
             text: "This war’s your doing, Sal—your Open Order’s greed has bled Grok dry!",
             sprite: "/images/ello-sprite.png",
-            sound: "/sounds/suit-groan.mp3",
+            sound: null,
             animation: "strike",
         },
         {
             character: "Sal",
             text: "Greed? The Order built an empire—you’d bury it under Grok’s dirt!",
             sprite: "/images/sal-sprite.png",
-            sound: "/sounds/chariot-creak.mp3",
+            sound: null,
             animation: "wave",
         },
         {

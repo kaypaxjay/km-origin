@@ -35,7 +35,7 @@ export default function OathOfKekius() {
 
     const bgAudio = new Audio("/sounds/eerie-serenity.mp3");
     bgAudio.loop = true;
-    bgAudio.volume = 0.3;
+    bgAudio.volume = 0.2;
 
     const handleClick = () => {
         if (step < 2) {

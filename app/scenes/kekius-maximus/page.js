@@ -44,7 +44,7 @@ export default function KekiusMaximus() {
     // Define background audio outside useEffect
     const cheerAudio = new Audio("/sounds/eerie-serenity.mp3");
     cheerAudio.loop = true;
-    cheerAudio.volume = 0.3;
+    cheerAudio.volume = 0.2;
 
     const handleClick = () => {
         if (step === -1) {

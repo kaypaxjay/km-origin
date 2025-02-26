@@ -33,8 +33,15 @@ export default function BattleViaFerrum() {
         },
         {
             character: "Ello",
-            text: "Embers warm homes—flames raze them. Taste my steel!",
+            text: "Embers warm homes—your flames raze them to ash!",
             sprite: "/images/ello-sprite.png",
+            sound: null,
+            animation: "strike",
+        },
+        {
+            character: "Sal",
+            text: "Let’s see your embers burn—Taste my steel!",
+            sprite: "/images/sal-sprite.png",
             sound: null,
             animation: "strike",
         },

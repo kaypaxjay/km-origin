@@ -25,6 +25,16 @@ export default function ConclusionSlides() {
         }
     };
 
+    useEffect(() => {
+        if (step === 0) {
+            const timer = setTimeout(() => {
+                handleClick(); // Trigger the same transition as clicking
+            }, 5000); // 5 seconds
+
+            return () => clearTimeout(timer); // Cleanup timer if component unmounts or step changes
+        }
+    }, [step]); // Run when step changes (only triggers at step 0)
+
     return (
         <div className="scene-container conclusion-slide" onClick={step === 0 ? handleClick : null}>
             {step === 0 && (

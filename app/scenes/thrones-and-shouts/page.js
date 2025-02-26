@@ -57,7 +57,7 @@ export default function ThronesAndShouts() {
     useEffect(() => {
         const windAudio = new Audio("/sounds/wind-gust.mp3");
         windAudio.loop = true;
-        windAudio.volume = 0.3;
+        windAudio.volume = 0.1;
 
         setTimeout(() => {
             setFlashIn(false);

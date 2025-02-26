@@ -33,10 +33,17 @@ export default function EchoesOfTheCarts() {
         },
         {
             character: "Sal",
-            text: "Hope’s a frail shield—kneel or break!",
+            text: "Hope’s a frail shield—my steel will crush it flat!",
             sprite: "/images/sal-sprite.png",
             sound: null,
             animation: "wave",
+        },
+        {
+            character: "Ello",
+            text: "Crush this then—my steel sings for Grok!",
+            sprite: "/images/ello-sprite.png",
+            sound: null,
+            animation: "firm",
         },
     ];
 
@@ -51,7 +58,7 @@ export default function EchoesOfTheCarts() {
     useEffect(() => {
         const windAudio = new Audio("/sounds/wind-gust.mp3");
         windAudio.loop = true;
-        windAudio.volume = 0.3;
+        windAudio.volume = 0.1;
 
         setTimeout(() => {
             setFlashIn(false);

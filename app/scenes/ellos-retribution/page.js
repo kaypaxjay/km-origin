@@ -28,7 +28,7 @@ export default function EllosRetribution() {
 
         const windAudio = new Audio("/sounds/wind-gust.mp3");
         windAudio.loop = true;
-        windAudio.volume = 0.3;
+        windAudio.volume = 0.1;
         windAudio.play().catch(() => console.log("Wind audio failed—skipped"));
 
         setTimeout(() => {
