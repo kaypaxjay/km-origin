@@ -19,6 +19,7 @@ export default function Home() {
             <button className="start-button" onClick={handleStart}>
                 Start Novel
             </button>
+            <p className="disclaimer">Best played on PC</p>
         </div>
     );
 }

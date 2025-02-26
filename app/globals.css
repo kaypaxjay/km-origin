@@ -56,3 +56,13 @@ body,
 .start-button:hover {
     background: #cd853f; /* Lighter bronze on hover */
 }
+
+/* New disclaimer style */
+.disclaimer {
+    font-family: "Cinzel", serif;
+    font-size: 1rem; /* Smaller font */
+    font-weight: 800;
+    color: #ffffff; /* Gold, but muted */
+    opacity: 1; /* Slightly faded */
+    margin-top: 20px; /* Space below button */
+}

@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import DialogueBox from "../../../components/DialogueBox";
 import ChoiceButton from "../../../components/ChoiceButton";
-import CartPopup from "../../../components/CartPopup"; // Correct component
+import CartPopup from "../../../components/CartPopup";
 import SaveNotice from "../../../components/SaveNotice";
 import { saveGameStats } from "../../../lib/storage";
 import "./styles.css";
@@ -14,6 +14,8 @@ export default function EllosRise() {
     const [textOverlay, setTextOverlay] = useState(true);
     const [showCart, setShowCart] = useState(false);
     const [fadeOut, setFadeOut] = useState(false);
+    const [flashIn, setFlashIn] = useState(true);
+    const [ambienceAudio, setAmbienceAudio] = useState(null); // State for background audio
 
     const dialogue = [
         {
@@ -52,6 +54,7 @@ export default function EllosRise() {
             animation: "step",
         },
     ];
+
     const choices = [
         {
             text: "Carts for every field—rest for all!",
@@ -67,9 +70,19 @@ export default function EllosRise() {
         },
     ];
 
+    // Initialize Audio only on the client side
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const audio = new Audio("/sounds/village-ambience.mp3");
+            audio.loop = true;
+            audio.volume = 0.1;
+            setAmbienceAudio(audio);
+        }
+    }, []); // Runs once on mount
+
     const handleNext = () => {
         if (step === 0 && !showCart) {
-            setShowCart(true); // Show cart popup after first line
+            setShowCart(true);
         } else if (step < dialogue.length - 1) {
             setStep((prevStep) => prevStep + 1);
         } else {
@@ -79,7 +92,7 @@ export default function EllosRise() {
 
     const handleCartClose = () => {
         setShowCart(false);
-        setStep(1); // Move to next line after popup closes
+        setStep(1);
     };
 
     const handleChoice = (choice) => {
@@ -94,34 +107,32 @@ export default function EllosRise() {
         saveGameStats(stats);
 
         setFadeOut(true);
-        const whooshAudio = new Audio("/sounds/flash-whoosh.mp3");
-        whooshAudio.volume = 0.8;
-        whooshAudio.play().catch(() => console.log("Whoosh audio failed—skipped"));
+        if (typeof window !== "undefined") {
+            const whooshAudio = new Audio("/sounds/flash-whoosh.mp3");
+            whooshAudio.volume = 0.8;
+            whooshAudio.play().catch(() => console.log("Whoosh audio failed—skipped"));
+        }
         setTimeout(() => {
             window.location.href = "/scenes/echoes-of-the-carts";
         }, 500);
     };
 
     useEffect(() => {
-        const ambienceAudio = new Audio("/sounds/village-ambience.mp3");
-        ambienceAudio.loop = true;
-        ambienceAudio.volume = 0.1;
-
-        setTimeout(() => {
-            setFlashIn(false);
+        if (ambienceAudio) {
             setTimeout(() => {
-                setTextOverlay(false);
-                setStep(0);
-                ambienceAudio.play().catch(() => console.log("Ambience audio failed—skipped"));
-            }, 2000);
-        }, 500);
+                setFlashIn(false);
+                setTimeout(() => {
+                    setTextOverlay(false);
+                    setStep(0);
+                    ambienceAudio.play().catch(() => console.log("Ambience audio failed—skipped"));
+                }, 2000);
+            }, 500);
+        }
 
         return () => {
-            ambienceAudio.pause();
+            if (ambienceAudio) ambienceAudio.pause();
         };
-    }, []);
-
-    const [flashIn, setFlashIn] = useState(true);
+    }, [ambienceAudio]); // Runs when ambienceAudio is set
 
     return (
         <div

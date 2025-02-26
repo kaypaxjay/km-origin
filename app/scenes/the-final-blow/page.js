@@ -6,10 +6,11 @@ import SaveNotice from "../../../components/SaveNotice";
 import "./styles.css";
 
 export default function TheFinalBlow() {
-    const [step, setStep] = useState(-1); // -1: Flash, 0: Panel 1, 1: Panel 2, 2: Panel 3, 3: Shout, 4: Transition
+    const [step, setStep] = useState(-1); // -1: Flash, 0-2: Panels, 3: Shout, 4: Transition
     const [revealedPanels, setRevealedPanels] = useState([false, false, false]);
     const [redFlash, setRedFlash] = useState(false);
     const [fadeOut, setFadeOut] = useState(false);
+    const [windAudio, setWindAudio] = useState(null); // State for background audio
 
     const dialogue = [
         {
@@ -49,57 +50,71 @@ export default function TheFinalBlow() {
         { image: "/images/panel-3.png" }, // Lock
     ];
 
+    // Initialize Audio only on the client side
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const audio = new Audio("/sounds/wind-gust.mp3");
+            audio.loop = true;
+            audio.volume = 0.1;
+            setWindAudio(audio);
+        }
+    }, []); // Runs once on mount
+
     const handleClick = () => {
         if (step < 2) {
             const newRevealed = [...revealedPanels];
-            newRevealed[step + 1] = true; // Reveal next panel
+            newRevealed[step + 1] = true;
             setRevealedPanels(newRevealed);
-            setStep(step + 1); // Move to next panel
+            setStep(step + 1);
         } else if (step === 2) {
-            setStep(3); // Move to collective shout
+            setStep(3);
         } else if (step === 3) {
-            setStep(4); // Trigger sword sound, red flash, and immediate black transition
-            const swordAudio = new Audio("/sounds/sword-clash.mp3");
-            swordAudio.volume = 0.8;
-            swordAudio.play().catch(() => console.log("Sword audio failed—skipped"));
-            setRedFlash(true); // Start red flash
-            setFadeOut(true); // Immediate black fade-out
+            setStep(4);
+            if (typeof window !== "undefined") {
+                const swordAudio = new Audio("/sounds/sword-clash.mp3");
+                swordAudio.volume = 0.8;
+                swordAudio.play().catch(() => console.log("Sword audio failed—skipped"));
+            }
+            setRedFlash(true);
+            setFadeOut(true);
             setTimeout(() => {
-                const whooshAudio = new Audio("/sounds/flash-whoosh.mp3");
-                whooshAudio.volume = 0.8;
-                whooshAudio.play().catch(() => console.log("Whoosh audio failed—skipped"));
+                if (typeof window !== "undefined") {
+                    const whooshAudio = new Audio("/sounds/flash-whoosh.mp3");
+                    whooshAudio.volume = 0.8;
+                    whooshAudio.play().catch(() => console.log("Whoosh audio failed—skipped"));
+                }
                 setTimeout(() => {
                     window.location.href = "/scenes/collaboration-and-fallout";
-                }, 500); // Black fade-out duration
-            }, 100); // Slight delay for whoosh to sync with fade
+                }, 500);
+            }, 100);
         }
     };
 
     useEffect(() => {
-        const windAudio = new Audio("/sounds/wind-gust.mp3");
-        windAudio.loop = true;
-        windAudio.volume = 0.1;
-        windAudio.play().catch(() => console.log("Wind audio failed—skipped"));
-
-        if (step === -1) {
-            setTimeout(() => {
-                setStep(0); // Start with first dialogue and panel after flash
-                const newRevealed = [...revealedPanels];
-                newRevealed[0] = true; // Reveal Panel 1 immediately
-                setRevealedPanels(newRevealed);
-            }, 500); // Flash-in duration
+        if (windAudio) {
+            windAudio.play().catch(() => console.log("Wind audio failed—skipped"));
+            if (step === -1) {
+                setTimeout(() => {
+                    setStep(0);
+                    const newRevealed = [...revealedPanels];
+                    newRevealed[0] = true;
+                    setRevealedPanels(newRevealed);
+                }, 500);
+            }
         }
 
-        if (step >= 0 && step < 3) {
-            const panelAudio = new Audio(dialogue[step].sound);
-            panelAudio.volume = 0.8;
-            panelAudio.play().catch(() => console.log("Panel audio failed—skipped"));
+        if (step >= 0 && step < 3 && dialogue[step].sound) {
+            if (typeof window !== "undefined") {
+                const panelAudio = new Audio(dialogue[step].sound);
+                panelAudio.volume = 0.8;
+                panelAudio.play().catch(() => console.log("Panel audio failed—skipped"));
+            }
         }
 
         return () => {
-            windAudio.pause();
+            if (windAudio) windAudio.pause();
         };
-    }, [step]);
+    }, [step, windAudio]); // Runs on step change or when windAudio is set
 
     return (
         <div className="scene-container" onClick={handleClick}>
@@ -150,7 +165,7 @@ export default function TheFinalBlow() {
                     <DialogueBox
                         character={dialogue[step].character}
                         text={dialogue[step].text}
-                        sound={null} // Sound handled in useEffect or handleClick
+                        sound={null}
                     />
                 </>
             )}

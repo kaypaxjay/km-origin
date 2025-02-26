@@ -12,6 +12,8 @@ export default function EllosAmbition() {
     const [choiceMade, setChoiceMade] = useState(false);
     const [textOverlay, setTextOverlay] = useState(true);
     const [fadeOut, setFadeOut] = useState(false);
+    const [flashIn, setFlashIn] = useState(true);
+    const [ambienceAudio, setAmbienceAudio] = useState(null); // State for background audio
 
     const dialogue = [
         {
@@ -57,6 +59,7 @@ export default function EllosAmbition() {
             animation: "bounce",
         },
     ];
+
     const choices = [
         { text: "A galley for all—stars for Grok!", elloPoints: 1, salPoints: 0, machinaTrust: 0 },
         {
@@ -66,6 +69,16 @@ export default function EllosAmbition() {
             machinaTrust: 1,
         },
     ];
+
+    // Initialize Audio only on the client side
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const audio = new Audio("/sounds/gentle-waves.mp3");
+            audio.loop = true;
+            audio.volume = 0.3;
+            setAmbienceAudio(audio);
+        }
+    }, []); // Runs once on mount
 
     const handleNext = () => {
         if (step < dialogue.length - 1) {
@@ -87,54 +100,45 @@ export default function EllosAmbition() {
         saveGameStats(stats);
 
         setFadeOut(true);
-        const whooshAudio = new Audio("/sounds/flash-whoosh.mp3");
-        whooshAudio.volume = 0.8;
-        whooshAudio.play().catch(() => console.log("Whoosh audio failed—skipped"));
+        if (typeof window !== "undefined") {
+            const whooshAudio = new Audio("/sounds/flash-whoosh.mp3");
+            whooshAudio.volume = 0.8;
+            whooshAudio.play().catch(() => console.log("Whoosh audio failed—skipped"));
+        }
         setTimeout(() => {
             window.location.href = "/scenes/thrones-and-shouts";
         }, 500);
     };
 
     useEffect(() => {
-        const ambienceAudio = new Audio("/sounds/gentle-waves.mp3");
-        ambienceAudio.loop = true;
-        ambienceAudio.volume = 0.3;
-
-        setTimeout(() => {
-            setFlashIn(false);
+        if (ambienceAudio) {
             setTimeout(() => {
-                setTextOverlay(false);
-                setStep(0);
-                ambienceAudio.play().catch(() => console.log("Ambience audio failed—skipped"));
-            }, 2000);
-        }, 500);
+                setFlashIn(false);
+                setTimeout(() => {
+                    setTextOverlay(false);
+                    setStep(0);
+                    ambienceAudio.play().catch(() => console.log("Ambience audio failed—skipped"));
+                }, 2000);
+            }, 500);
+        }
 
         return () => {
-            ambienceAudio.pause();
+            if (ambienceAudio) ambienceAudio.pause();
         };
-    }, []);
-
-    const [flashIn, setFlashIn] = useState(true);
+    }, [ambienceAudio]); // Runs when ambienceAudio is set
 
     return (
         <div className="scene-container" onClick={!choiceMade && !textOverlay ? handleNext : null}>
             <img src="/images/cliffside-galley.png" alt="Caelum Galley" className="background" />
             {step >= 0 && (
                 <>
-                    {dialogue[step].character === "Ello" && (
-                        <img
-                            src="/images/adult-ello-sprite.png"
-                            alt="Adult Ello"
-                            className={`sprite ello active ${dialogue[step].animation}`}
-                        />
-                    )}
-                    {dialogue[step].character === "Sal" && (
-                        <img
-                            src="/images/adult-sal-sprite.png"
-                            alt="Adult Sal"
-                            className={`sprite sal active ${dialogue[step].animation}`}
-                        />
-                    )}
+                    <img
+                        src={dialogue[step].sprite}
+                        alt={dialogue[step].character}
+                        className={`sprite ${dialogue[step].character.toLowerCase()} active ${
+                            dialogue[step].animation
+                        }`}
+                    />
                     {!choiceMade && (
                         <DialogueBox
                             character={dialogue[step].character}

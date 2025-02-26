@@ -8,6 +8,7 @@ import "./styles.css";
 export default function LastWords() {
     const [step, setStep] = useState(-1); // -1: Fade-in, 0-7: Dialogue, 8: Transition
     const [fadeOut, setFadeOut] = useState(false);
+    const [windAudio, setWindAudio] = useState(null); // State for background audio
 
     const dialogue = [
         {
@@ -36,7 +37,7 @@ export default function LastWords() {
             text: "I saw it… a world lifted by machina… not scrabbling in dirt…",
             sprite: "/images/sal-injured.png",
             sound: null,
-            animation: "fall",
+            animation: "stand",
         },
         {
             character: "Ello",
@@ -50,7 +51,7 @@ export default function LastWords() {
             text: "No… to pull them up… but only the strong could lead…",
             sprite: "/images/sal-injured.png",
             sound: null,
-            animation: "fall",
+            animation: "stand",
         },
         {
             character: "Ello",
@@ -68,9 +69,25 @@ export default function LastWords() {
         },
     ];
 
-    const windAudio = new Audio("/sounds/sad-music.mp3");
-    windAudio.loop = true;
-    windAudio.volume = 0.2;
+    // Initialize Audio only on the client side
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const audio = new Audio("/sounds/sad-music.mp3");
+            audio.loop = true;
+            audio.volume = 0.2;
+            setWindAudio(audio);
+        }
+    }, []); // Runs once on mount
+
+    // Background music control
+    useEffect(() => {
+        if (windAudio) {
+            windAudio.play().catch(() => console.log("Wind audio failed—skipped"));
+        }
+        return () => {
+            if (windAudio) windAudio.pause();
+        };
+    }, [windAudio]); // Runs when windAudio is set
 
     const handleClick = () => {
         if (step < 7) {
@@ -79,9 +96,11 @@ export default function LastWords() {
             setStep(8);
             setFadeOut(true);
             setTimeout(() => {
-                const whooshAudio = new Audio("/sounds/flash-whoosh.mp3");
-                whooshAudio.volume = 0.8;
-                whooshAudio.play().catch(() => console.log("Whoosh audio failed—skipped"));
+                if (typeof window !== "undefined") {
+                    const whooshAudio = new Audio("/sounds/flash-whoosh.mp3");
+                    whooshAudio.volume = 0.8;
+                    whooshAudio.play().catch(() => console.log("Whoosh audio failed—skipped"));
+                }
                 setTimeout(() => {
                     window.location.href = "/scenes/conclusion";
                 }, 500);
@@ -89,13 +108,7 @@ export default function LastWords() {
         }
     };
 
-    useEffect(() => {
-        windAudio.play().catch(() => console.log("Wind audio failed—skipped"));
-        return () => {
-            windAudio.pause();
-        };
-    }, []);
-
+    // Dialogue and transition control
     useEffect(() => {
         if (step === -1) {
             setTimeout(() => {
@@ -104,9 +117,11 @@ export default function LastWords() {
         }
 
         if (step >= 0 && step < 8 && dialogue[step].sound) {
-            const soundAudio = new Audio(dialogue[step].sound);
-            soundAudio.volume = 0.8;
-            soundAudio.play().catch(() => console.log("Sound audio failed—skipped"));
+            if (typeof window !== "undefined") {
+                const soundAudio = new Audio(dialogue[step].sound);
+                soundAudio.volume = 0.8;
+                soundAudio.play().catch(() => console.log("Sound audio failed—skipped"));
+            }
         }
     }, [step]);
 

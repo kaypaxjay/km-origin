@@ -8,6 +8,8 @@ import "./styles.css";
 export default function FlamesOfTheNexus() {
     const [step, setStep] = useState(-1);
     const [fadeOut, setFadeOut] = useState(false);
+    const [flashIn, setFlashIn] = useState(true);
+    const [windAudio, setWindAudio] = useState(null); // State for background audio
 
     const dialogue = [
         {
@@ -54,14 +56,26 @@ export default function FlamesOfTheNexus() {
         },
     ];
 
+    // Initialize Audio only on the client side
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const audio = new Audio("/sounds/wind-gust.mp3");
+            audio.loop = true;
+            audio.volume = 0.1;
+            setWindAudio(audio);
+        }
+    }, []); // Runs once on mount
+
     const handleClick = () => {
         if (step < dialogue.length - 1) {
             setStep(step + 1);
         } else {
             setFadeOut(true);
-            const whooshAudio = new Audio("/sounds/flash-whoosh.mp3");
-            whooshAudio.volume = 0.8;
-            whooshAudio.play().catch(() => console.log("Whoosh audio failed—skipped"));
+            if (typeof window !== "undefined") {
+                const whooshAudio = new Audio("/sounds/flash-whoosh.mp3");
+                whooshAudio.volume = 0.8;
+                whooshAudio.play().catch(() => console.log("Whoosh audio failed—skipped"));
+            }
             setTimeout(() => {
                 window.location.href = "/scenes/ellos-ambition";
             }, 500);
@@ -69,42 +83,31 @@ export default function FlamesOfTheNexus() {
     };
 
     useEffect(() => {
-        const windAudio = new Audio("/sounds/wind-gust.mp3");
-        windAudio.loop = true;
-        windAudio.volume = 0.1;
-
-        setTimeout(() => {
-            setFlashIn(false);
-            setStep(0); // Auto-start dialogue
-            windAudio.play().catch(() => console.log("Wind audio failed—skipped"));
-        }, 500);
+        if (windAudio) {
+            setTimeout(() => {
+                setFlashIn(false);
+                setStep(0);
+                windAudio.play().catch(() => console.log("Wind audio failed—skipped"));
+            }, 500);
+        }
 
         return () => {
-            windAudio.pause();
+            if (windAudio) windAudio.pause();
         };
-    }, []);
-
-    const [flashIn, setFlashIn] = useState(true);
+    }, [windAudio]); // Runs when windAudio is set
 
     return (
         <div className="scene-container" onClick={handleClick}>
             <img src="/images/battlefield.png" alt="Tiber Verge" className="background" />
             {step >= 0 && (
                 <>
-                    {dialogue[step].character === "Ello" && (
-                        <img
-                            src="/images/ello-sprite.png"
-                            alt="Ello"
-                            className={`sprite ello active ${dialogue[step].animation}`}
-                        />
-                    )}
-                    {dialogue[step].character === "Sal" && (
-                        <img
-                            src="/images/sal-sprite.png"
-                            alt="Sal"
-                            className={`sprite sal active ${dialogue[step].animation}`}
-                        />
-                    )}
+                    <img
+                        src={dialogue[step].sprite}
+                        alt={dialogue[step].character}
+                        className={`sprite ${dialogue[step].character.toLowerCase()} active ${
+                            dialogue[step].animation
+                        }`}
+                    />
                     <DialogueBox
                         character={dialogue[step].character}
                         text={dialogue[step].text}

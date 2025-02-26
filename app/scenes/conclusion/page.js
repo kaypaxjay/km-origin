@@ -12,28 +12,29 @@ export default function ConclusionSlides() {
 
     const handleClick = () => {
         if (step === 0) {
-            setStep(1); // Trigger transition
+            setStep(1);
             setFadeOut(true);
             setTimeout(() => {
-                const whooshAudio = new Audio("/sounds/flash-whoosh.mp3");
-                whooshAudio.volume = 0.8;
-                whooshAudio.play().catch(() => console.log("Whoosh audio failed—skipped"));
+                if (typeof window !== "undefined") {
+                    const whooshAudio = new Audio("/sounds/flash-whoosh.mp3");
+                    whooshAudio.volume = 0.8;
+                    whooshAudio.play().catch(() => console.log("Whoosh audio failed—skipped"));
+                }
                 setTimeout(() => {
                     window.location.href = "/scenes/kekius-maximus";
-                }, 500); // Fade-out duration
-            }, 100); // Slight delay for whoosh sync
+                }, 500);
+            }, 100);
         }
     };
 
     useEffect(() => {
         if (step === 0) {
             const timer = setTimeout(() => {
-                handleClick(); // Trigger the same transition as clicking
-            }, 5000); // 5 seconds
-
-            return () => clearTimeout(timer); // Cleanup timer if component unmounts or step changes
+                handleClick();
+            }, 5000);
+            return () => clearTimeout(timer);
         }
-    }, [step]); // Run when step changes (only triggers at step 0)
+    }, [step]);
 
     return (
         <div className="scene-container conclusion-slide" onClick={step === 0 ? handleClick : null}>

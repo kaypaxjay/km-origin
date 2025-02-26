@@ -14,7 +14,8 @@ export default function CoinVault() {
     const [textOverlay, setTextOverlay] = useState(true);
     const [showVault, setShowVault] = useState(false);
     const [flashIn, setFlashIn] = useState(true);
-    const [fadeOut, setFadeOut] = useState(false); // Single declaration here
+    const [fadeOut, setFadeOut] = useState(false);
+    const [ambienceAudio, setAmbienceAudio] = useState(null); // State for background audio
 
     const dialogue = [
         {
@@ -60,20 +61,31 @@ export default function CoinVault() {
             animation: "bounce",
         },
     ];
+
     const choices = [
         {
             text: "Vaults for every home—wealth for all!",
             elloPoints: 1,
             salPoints: 0,
             machinaTrust: 0,
-        }, // Ello’s mass uplift
+        },
         {
             text: "A vault to flood the empire—coin for Grok’s glory!",
             elloPoints: 0,
             salPoints: 1,
             machinaTrust: 1,
-        }, // Sal’s grand ambition
+        },
     ];
+
+    // Initialize Audio only on the client side
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const audio = new Audio("/sounds/village-ambience.mp3");
+            audio.loop = true;
+            audio.volume = 0.1;
+            setAmbienceAudio(audio);
+        }
+    }, []); // Runs once on mount
 
     const handleNext = () => {
         if (step === 0 && !showVault) {
@@ -102,32 +114,32 @@ export default function CoinVault() {
         saveGameStats(stats);
 
         setFadeOut(true);
-        const whooshAudio = new Audio("/sounds/flash-whoosh.mp3");
-        whooshAudio.volume = 0.8;
-        whooshAudio.play().catch(() => console.log("Whoosh audio failed—skipped"));
+        if (typeof window !== "undefined") {
+            const whooshAudio = new Audio("/sounds/flash-whoosh.mp3");
+            whooshAudio.volume = 0.8;
+            whooshAudio.play().catch(() => console.log("Whoosh audio failed—skipped"));
+        }
         setTimeout(() => {
             window.location.href = "/scenes/battle-via-ferrum";
         }, 500);
     };
 
     useEffect(() => {
-        const ambienceAudio = new Audio("/sounds/village-ambience.mp3");
-        ambienceAudio.loop = true;
-        ambienceAudio.volume = 0.1;
-
-        setTimeout(() => {
-            setFlashIn(false);
+        if (ambienceAudio) {
             setTimeout(() => {
-                setTextOverlay(false);
-                setStep(0);
-                ambienceAudio.play().catch(() => console.log("Ambience audio failed—skipped"));
-            }, 2000);
-        }, 500);
+                setFlashIn(false);
+                setTimeout(() => {
+                    setTextOverlay(false);
+                    setStep(0);
+                    ambienceAudio.play().catch(() => console.log("Ambience audio failed—skipped"));
+                }, 2000);
+            }, 500);
+        }
 
         return () => {
-            ambienceAudio.pause();
+            if (ambienceAudio) ambienceAudio.pause();
         };
-    }, []);
+    }, [ambienceAudio]); // Runs when ambienceAudio is set
 
     return (
         <div
@@ -137,20 +149,13 @@ export default function CoinVault() {
             <img src="/images/agora.png" alt="Agora" className="background" />
             {step >= 0 && (
                 <>
-                    {dialogue[step].character === "Ello" && (
-                        <img
-                            src="/images/young-ello-sprite.png"
-                            alt="Young Ello"
-                            className={`sprite ello active ${dialogue[step].animation}`}
-                        />
-                    )}
-                    {dialogue[step].character === "Sal" && (
-                        <img
-                            src="/images/young-sal-sprite.png"
-                            alt="Young Sal"
-                            className={`sprite sal active ${dialogue[step].animation}`}
-                        />
-                    )}
+                    <img
+                        src={dialogue[step].sprite}
+                        alt={dialogue[step].character}
+                        className={`sprite ${dialogue[step].character.toLowerCase()} active ${
+                            dialogue[step].animation
+                        }`}
+                    />
                     {!showVault && !choiceMade && (
                         <DialogueBox
                             character={dialogue[step].character}

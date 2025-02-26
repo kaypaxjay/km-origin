@@ -8,6 +8,7 @@ import "./styles.css";
 export default function OathOfKekius() {
     const [step, setStep] = useState(-1); // -1: Fade-in, 0-2: Dialogue, 3: End
     const [fadeOut, setFadeOut] = useState(false);
+    const [bgAudio, setBgAudio] = useState(null); // State for background audio
 
     const dialogue = [
         {
@@ -33,9 +34,15 @@ export default function OathOfKekius() {
         },
     ];
 
-    const bgAudio = new Audio("/sounds/eerie-serenity.mp3");
-    bgAudio.loop = true;
-    bgAudio.volume = 0.2;
+    // Initialize Audio only on the client side
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const audio = new Audio("/sounds/eerie-serenity.mp3");
+            audio.loop = true;
+            audio.volume = 0.2;
+            setBgAudio(audio);
+        }
+    }, []); // Runs once on mount
 
     const handleClick = () => {
         if (step < 2) {
@@ -44,17 +51,19 @@ export default function OathOfKekius() {
             setStep(3);
             setFadeOut(true);
             setTimeout(() => {
-                window.location.href = "/selection"; // Redirect to selection page
-            }, 500); // Fade-out duration
+                window.location.href = "/selection";
+            }, 500);
         }
     };
 
     useEffect(() => {
-        bgAudio.play().catch(() => console.log("Background audio failed—skipped"));
+        if (bgAudio) {
+            bgAudio.play().catch(() => console.log("Background audio failed—skipped"));
+        }
         return () => {
-            bgAudio.pause();
+            if (bgAudio) bgAudio.pause();
         };
-    }, []);
+    }, [bgAudio]); // Runs when bgAudio is set
 
     useEffect(() => {
         if (step === -1) {
