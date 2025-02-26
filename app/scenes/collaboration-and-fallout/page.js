@@ -8,7 +8,7 @@ import { saveGameStats } from "../../../lib/storage";
 import "./styles.css";
 
 export default function CollaborationAndFallout() {
-    const [step, setStep] = useState(-1); // -1: Fade-in, 0-7: Dialogue, 8: Choice, 9: Transition
+    const [step, setStep] = useState(-1); // -1: Fade-in, 0-5: Dialogue, 6: Choice, 7: Transition
     const [choiceMade, setChoiceMade] = useState(false);
     const [textOverlay, setTextOverlay] = useState(true);
     const [fadeOut, setFadeOut] = useState(false);
@@ -57,22 +57,53 @@ export default function CollaborationAndFallout() {
             animation: "firm",
         },
     ];
+
     const choices = [
         { text: "Bind it safe—for Grok’s hands!", elloPoints: 1, salPoints: 0 },
         { text: "Let it rule—iron over flesh!", elloPoints: 0, salPoints: 1 },
     ];
 
-    // Define background audio outside useEffect
-    const gearAudio = new Audio("/sounds/night-ambience.mp3");
-    gearAudio.loop = true;
-    gearAudio.volume = 0.2;
+    // Only initialize Audio on the client side
+    const [gearAudio, setGearAudio] = useState(null);
+
+    useEffect(() => {
+        // Create Audio instance only in the browser
+        if (typeof window !== "undefined") {
+            const audio = new Audio("/sounds/night-ambience.mp3");
+            audio.loop = true;
+            audio.volume = 0.2;
+            setGearAudio(audio);
+        }
+    }, []); // Runs once on mount
+
+    // Background music control
+    useEffect(() => {
+        if (gearAudio) {
+            gearAudio.play().catch(() => console.log("Gear audio failed—skipped"));
+        }
+        return () => {
+            if (gearAudio) gearAudio.pause();
+        };
+    }, [gearAudio]); // Runs when gearAudio is set
+
+    // Dialogue and transition control
+    useEffect(() => {
+        if (step === -1) {
+            setTimeout(() => {
+                setStep(0);
+                setTimeout(() => {
+                    setTextOverlay(false);
+                }, 2000); // Text overlay duration
+            }, 500); // Fade-in duration
+        }
+    }, [step]);
 
     const handleNext = () => {
         if (step < dialogue.length - 1) {
             setStep((prevStep) => prevStep + 1);
         } else {
             setChoiceMade(true);
-            setStep(8); // Explicitly set to choice state
+            setStep(6); // Move to choice state (6, not 8, since 0-5 are dialogue)
         }
     };
 
@@ -87,68 +118,40 @@ export default function CollaborationAndFallout() {
 
         setFadeOut(true);
         setTimeout(() => {
-            const whooshAudio = new Audio("/sounds/flash-whoosh.mp3");
-            whooshAudio.volume = 0.8;
-            whooshAudio.play().catch(() => console.log("Whoosh audio failed—skipped"));
+            if (typeof window !== "undefined") {
+                const whooshAudio = new Audio("/sounds/flash-whoosh.mp3");
+                whooshAudio.volume = 0.8;
+                whooshAudio.play().catch(() => console.log("Whoosh audio failed—skipped"));
+            }
             setTimeout(() => {
                 window.location.href = "/scenes/last-words";
             }, 500); // Fade duration
         }, 500); // Fade-out delay
     };
 
-    // Background music control (runs once on mount/unmount)
-    useEffect(() => {
-        gearAudio.play().catch(() => console.log("Gear audio failed—skipped"));
-
-        return () => {
-            gearAudio.pause();
-        };
-    }, []); // Empty dependency array—runs only on mount/unmount
-
-    // Dialogue and transition control
-    useEffect(() => {
-        if (step === -1) {
-            setTimeout(() => {
-                setStep(0);
-                setTimeout(() => {
-                    setTextOverlay(false);
-                }, 2000); // Text overlay duration
-            }, 500); // Fade-in duration
-        }
-    }, [step]); // Runs on step change
-
     return (
         <div
             className="scene-container"
-            onClick={!choiceMade && !textOverlay && step < 8 ? handleNext : null}
+            onClick={!choiceMade && !textOverlay && step < 6 ? handleNext : null}
         >
             <img src="/images/machina-tower.png" alt="Machina Tower" className="background" />
-            {step >= 0 && step < 8 && (
+            {step >= 0 && step < 6 && (
                 <>
-                    {dialogue[step].character === "Ello" && (
-                        <img
-                            src={dialogue[step].sprite}
-                            alt="Ello"
-                            className={`sprite ello active ${dialogue[step].animation}`}
-                        />
-                    )}
-                    {dialogue[step].character === "Sal" && (
-                        <img
-                            src={dialogue[step].sprite}
-                            alt="Sal"
-                            className={`sprite sal active ${dialogue[step].animation}`}
-                        />
-                    )}
-                    {!choiceMade && (
-                        <DialogueBox
-                            character={dialogue[step].character}
-                            text={dialogue[step].text}
-                            sound={dialogue[step].sound}
-                        />
-                    )}
+                    <img
+                        src={dialogue[step].sprite}
+                        alt={dialogue[step].character}
+                        className={`sprite ${dialogue[step].character.toLowerCase()} active ${
+                            dialogue[step].animation
+                        }`}
+                    />
+                    <DialogueBox
+                        character={dialogue[step].character}
+                        text={dialogue[step].text}
+                        sound={dialogue[step].sound}
+                    />
                 </>
             )}
-            {step >= 8 && choiceMade && !fadeOut && (
+            {step >= 6 && choiceMade && !fadeOut && (
                 <div className="choice-container">
                     {choices.map((choice, index) => (
                         <ChoiceButton
