@@ -19,8 +19,8 @@ export default function Selection() {
     const handleShare = () => {
         const text =
             choice === "ello"
-                ? "I’m Kekius Maximus, Champion of the People! Play Kekius Maximus: The Origins: https://km-origins.vercel.app #KekiusMaximus"
-                : "I’m Kekius Maximus, Lord of the Bold! Play Kekius Maximus: The Origins: https://km-origins.vercel.app #KekiusMaximus";
+                ? "I’m Kekius Maximus, Champion of the People! Play Kekius Maximus: The Origins: https://km-origin-git-main-ryalphas-projects.vercel.app/ "
+                : "I’m Kekius Maximus, Lord of the Bold! Play Kekius Maximus: The Origins: https://km-origin-git-main-ryalphas-projects.vercel.app/ ";
         const url = `https://x.com/intent/tweet?text=${encodeURIComponent(text)}`;
         window.open(url, "_blank");
     };
