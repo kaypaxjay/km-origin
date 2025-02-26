@@ -1,0 +1,122 @@
+.scene-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    cursor: pointer;
+    background: #000;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.background {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.sprite {
+    position: absolute;
+    bottom: 0;
+    height: 70%;
+    z-index: 2;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+}
+
+.sprite.ello {
+    left: 10%;
+}
+.sprite.sal {
+    right: 10%;
+}
+.sprite.active {
+    opacity: 1;
+}
+
+.sprite.firm {
+    animation: firm 0.5s ease;
+}
+.sprite.lean {
+    animation: lean 0.5s ease;
+}
+.sprite.step {
+    animation: step 0.5s ease;
+}
+.sprite.wave {
+    animation: wave 0.5s ease;
+}
+
+.flash-in {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    z-index: 4;
+    animation: flashInEffect 0.5s ease forwards;
+}
+
+@keyframes flashInEffect {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+@keyframes firm {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+@keyframes lean {
+    0% {
+        transform: rotate(0);
+    }
+    50% {
+        transform: rotate(5deg);
+    }
+    100% {
+        transform: rotate(0);
+    }
+}
+@keyframes step {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}
+@keyframes wave {
+    0% {
+        transform: rotate(0);
+    }
+    25% {
+        transform: rotate(10deg);
+    }
+    75% {
+        transform: rotate(-10deg);
+    }
+    100% {
+        transform: rotate(0);
+    }
+}

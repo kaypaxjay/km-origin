@@ -1,0 +1,95 @@
+.scene-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    cursor: pointer;
+    background: #000;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.strike {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.sprite {
+    position: absolute;
+    bottom: 0;
+    height: 70%;
+    z-index: 2;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+}
+
+.sprite.ello {
+    left: 10%;
+}
+.sprite.active {
+    opacity: 1;
+}
+.sprite.flinch {
+    animation: flinch 0.5s ease;
+} /* New: Flinch animation */
+
+.flash-in {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #fff;
+    z-index: 3;
+    animation: flashInEffect 0.5s ease forwards;
+}
+
+.fade-out {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 3;
+    animation: fadeOutEffect 0.5s ease forwards;
+}
+
+@keyframes flashInEffect {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+@keyframes fadeOutEffect {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+@keyframes flinch {
+    0% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px) rotate(-5deg);
+    }
+    75% {
+        transform: translateX(5px) rotate(5deg);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}

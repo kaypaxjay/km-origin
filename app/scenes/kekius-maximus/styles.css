@@ -1,0 +1,140 @@
+.scene-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    cursor: pointer;
+    background: #000;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.background {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.sprite {
+    position: absolute;
+    bottom: 0;
+    height: 70%;
+    z-index: 2;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+    filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.8));
+}
+
+.sprite.ello {
+    left: 10%; /* Ello stays on the left */
+}
+
+.sprite.consul {
+    right: 10%; /* Consul moves to the right */
+}
+
+.sprite.active {
+    opacity: 1;
+}
+
+.sprite.raise {
+    animation: raise 0.5s ease;
+}
+
+.sprite.stand {
+    animation: none;
+}
+
+.fade-in {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 4;
+    animation: fadeInEffect 0.5s ease forwards;
+}
+
+.text-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 3;
+    opacity: 0;
+    animation: textFadeEffect 2s ease forwards;
+}
+
+.text-overlay p {
+    color: #fff;
+    font-family: "Cinzel", serif;
+    font-size: 1.5rem;
+    text-align: center;
+    margin: 0 20px;
+    text-shadow: 0 0 5px #000;
+}
+
+.fade-out {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    z-index: 4;
+    animation: fadeOutEffect 0.5s ease forwards;
+}
+
+@keyframes fadeInEffect {
+    0% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+@keyframes textFadeEffect {
+    0% {
+        opacity: 0;
+    }
+    20% {
+        opacity: 1;
+    }
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
+@keyframes fadeOutEffect {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+@keyframes raise {
+    0% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+    100% {
+        transform: translateY(0);
+    }
+}

@@ -1,0 +1,113 @@
+.selection-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    background: #1a1a1a;
+    color: #fff;
+    font-family: "Cinzel", serif;
+    text-align: center;
+    padding: 20px;
+}
+
+.selection-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+}
+
+.selection-container p {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin-bottom: 30px;
+}
+
+.choice-buttons {
+    display: flex;
+    gap: 20px;
+}
+
+.choice-buttons button,
+.share-button {
+    background: #8b4513;
+    color: #ffd700;
+    font-family: "Cinzel", serif;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    border: 2px solid #ffd700;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.choice-buttons button:hover,
+.share-button:hover {
+    background: #cd853f;
+}
+
+.report-card {
+    background: #2c2c2c;
+    padding: 15px; /* Reduced from 20px */
+    border: 2px solid #ffd700;
+    border-radius: 10px;
+    max-width: 400px; /* Reduced from 500px */
+}
+
+.report-card h2 {
+    font-size: 1.8rem; /* Slightly smaller */
+    margin-bottom: 15px; /* Reduced from 20px */
+    text-shadow: 0 0 10px rgba(255, 215, 0, 0.8);
+}
+
+.report-card .report-image {
+    width: 200px; /* Reduced from 300px */
+    height: 300px; /* Reduced from 450px */
+    margin: 0 auto 15px; /* Reduced bottom margin */
+    display: block;
+}
+
+.report-card h3 {
+    font-size: 1.6rem; /* Slightly smaller */
+    margin: 0 0 8px 0; /* Reduced from 10px */
+}
+
+.report-card h4 {
+    font-size: 1.2rem; /* Slightly smaller */
+    margin: 0 0 12px 0; /* Reduced from 15px */
+    color: #ffd700;
+}
+
+.report-card .description {
+    font-size: 1rem; /* Slightly smaller */
+    margin-bottom: 12px; /* Reduced from 15px */
+}
+
+.report-card .trait {
+    font-size: 0.9rem; /* Slightly smaller */
+    margin-bottom: 15px; /* Reduced from 20px */
+}
+
+.report-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 400px; /* Match report card */
+    margin-top: 15px; /* Reduced from 20px */
+}
+
+.return-link {
+    background: none;
+    color: #ffd700;
+    font-family: "Cinzel", serif;
+    font-size: 1.2rem;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.return-link:hover {
+    color: #ffaa1d;
+}
